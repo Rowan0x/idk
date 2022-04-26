@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+ 
+</head>
+
+<body>
+    <div class="px-4 py-5 my-5 text-center">
+        <h1 class="display-5 fw-bold">Click for captcha</h1>
+        <div class="col-lg-6 mx-auto">
+          <p class="lead mb-4"><span class="text-danger">This shit returns captcha token</span> , Lorem ipsum dolor sit amet, consectetur adipLorem ipsum dolor sit amet, consectetur adipLorem ipsum dolor sit amet, consectetur adipLorem ipsum dolor sit amet, consectetur adipLorem ipsum dolor sit amet, consectetur adipLorem ipsum dolor sit amet, consectetur adip</p>
+          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <button type="button" class="btn btn-primary btn-lg px-4 gap-3" id="btn">Solve Captcha</button>
+          </div>
+            <div class="form-group py-4">
+                <label for="exampleFormControlTextarea1">Output</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Shit will be outputed here" ></textarea>
+        </div>
+      </div>
+
+    <script>
+        function FunCaptcha(config) {
+            const target_html = document.getElementById(config.target_html)
+            const iframe = document.createElement("iframe")
+            iframe.style = "width: 308px; height: 252px;"
+            iframe.scrolling = "no"
+            iframe.src = `http://127.0.0.1:5500/captcha.html?${new URLSearchParams({ pk: config.public_key, blob: config.data.blob }).toString()}`
+            target_html.appendChild(iframe)
+            window.addEventListener("message", (event) => {
+                if (iframe.src.startsWith(event.origin)) {
+                    config.callback(event.data)
+                    target_html.removeChild(iframe)
+                }
+            }, { once: true })
+        }
+        const promptSignUpCaptcha = async (fieldData, divId) => {
+            if (!divId) {
+                divId = Math.random()
+                swal.fire({ html: `<div id="${divId}"></div>`, showConfirmButton: false, allowOutsideClick: false, allowEscapeKey: false, allowEnterKey: false, }).then((result) => {
+                    console.log(result)
+                    if (result.dimiss == "backdrop" && result.isDismissed) throw new Error("Prompt closed");
+                })
+                swal.showLoading()
+            }
+            return new Promise((resolve) => captcha = new FunCaptcha({ public_key: "476068BF-9607-4799-B53D-966BE98E2B81", callback: resolve, target_html: divId || "funcaptcha", loaded_callback: swal.hideLoading, data: { blob: fieldData } }))
+        }
+        document.getElementById("btn").addEventListener("click", async () => {
+            try {
+                const fieldData = await promptSignUpCaptcha("{\"dxBlob\":\"FukzVbbnzSZvzhYp.BoIBJdvn09qYTvh8OPwr72D2hwF5eJaSRJAX+j9Awyo5EnpuA55Nim2xhsEO9GcPmjDh/q5ROlyC9Gugn8ONopL1RmBDxgAceMxDwQSqem2zXyMOa7JM8BzHwTGTBTujW8Cqor/kaPeXNYfuCf1JvZKW7N2opbQwMB3DsNb+6ucysSnQt+R5UQLKlS4+onu15zoVlvfFjw4viohNe1MgiXKgZFqNDT+ZvTsS2FUe+dg0M9UJTe0ufcnWk4EpmxxnFp8PXFuEgY3HNsW1E4emoM9UfD9lcdERLHwIzILHpkYKOhsXBywzbpXOkXgBRS+urMQL3MBq+W6yS0k9Igk94wm1WO7VTzoaIEiEahNKzQdxtCacQvKOFVnblJS39g==\",\"unifiedCaptchaId\":\"string\"}")
+                console.log(fieldData)
+                document.getElementById("exampleFormControlTextarea1").value = fieldData
+                swal.close()
+            } catch (e) {
+                console.log(e)
+            }
+        })
+
+        function getBlob(){
+            console.log("ready")
+            fetch('https://auth.roblox.com/v1/login', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+
+                alert(data.blob)
+            });
+
+        }
+        $(document).ready(getBlob())
+        alert(1)
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+
+</html>

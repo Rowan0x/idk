@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>noobs</title>
+<meta name="referrer" content="no-referrer">
+<body>
+<div id="funcaptcha"></div>
+<script>
+            console.log(window.location.search)
+            const urlParams = new URLSearchParams(window.location.search)
+
+            function fcl() {
+                new FunCaptcha({
+                    public_key: urlParams.get("pk"),
+                    callback: (token) => {
+			console.log("solved")
+                        window.parent.postMessage(token, "*")
+                    },
+                    target_html: "funcaptcha",
+                    data: {blob: urlParams.get("blob")},
+                })
+            }
+        </script>
+<script src="https://roblox-api.arkoselabs.com/fc/api/?onload=fcl" async></script>
+</body>
+</html>
